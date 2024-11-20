@@ -90,7 +90,7 @@ internal extension Stylesheet {
 
 	private func renderMediaQueries() -> String {
 		mediaQueries.reduce(into: "") { result, mediaQuery in
-			let cssClasses = mediaQuery.cssClasses.reduce(into: "") { classes, cssClass in
+			let cssClasses = mediaQuery.classes.reduce(into: "") { classes, cssClass in
 				let rules = cssClass.rules.reduce(into: "") { rulesResult, rule in
 					let properties = rule.properties.compactMap { "    \($0.name): \($0.value);"}.joined(separator: .separator)
 					rulesResult += "\(String.fourSpaces)\(rule.selector) {\(String.separator)\(properties)\(String.separator)}\n"

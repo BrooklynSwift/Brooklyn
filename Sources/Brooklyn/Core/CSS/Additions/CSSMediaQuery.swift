@@ -10,17 +10,17 @@ import Foundation
 /// A struct that represents a CSS media query
 public struct CSSMediaQuery {
 	internal let condition: Condition
-	internal let cssClasses: [CSSClass]
+	internal let classes: [CSSClass]
 	internal let variables: [CSSVariable]
 
 	/// Designated initializer
 	/// - Parameters:
 	///		- condition: A `Condition` object that represents the media query's condition
-	///		- cssClasses: An array of `CSSClass` this query may contain, defaults to empty
+	///		- classes: An array of `CSSClass` this query may contain, defaults to empty
 	///		- variables: An array of `CSSVariables`this query may contain, defaults to empty
-	public init(condition: Condition, cssClasses: [CSSClass] = [], variables: [CSSVariable] = []) {
+	public init(condition: Condition, classes: [CSSClass] = [], variables: [CSSVariable] = []) {
 		self.condition = condition
-		self.cssClasses = cssClasses
+		self.classes = classes
 		self.variables = variables
 	}
 
