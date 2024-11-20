@@ -9,6 +9,7 @@ internal typealias HTMLBuilder = GenericBuilder<HTMLRenderable>
 internal typealias ButtonBuilder = GenericBuilder<ButtonContent>
 internal typealias PageBuilder = GenericBuilder<PageContent>
 
+/// A result builder struct useful for creating custom reusable HTML components
 @resultBuilder
 public struct HTMLWidgetBuilder {
 	public
@@ -17,6 +18,7 @@ public struct HTMLWidgetBuilder {
 	}
 }
 
+/// A result builder struct to create generic builders of some type of HTML content
 @resultBuilder
 public struct GenericBuilder<T> {
 	public
@@ -38,19 +40,4 @@ public struct GenericBuilder<T> {
 	static func buildExpression(_ expression: String) -> T where T == ButtonContent {
 		return Text(expression)
 	}
-
-	//	public
-	//	static func buildBlock(_ components: [T]...) -> [T] {
-	//		return components.flatMap { $0 }
-	//	}
-	//
-	//	public
-	//	static func buildArray(_ components: [[T]]) -> [T] {
-	//		components.flatMap { $0 }
-	//	}
-	//
-	//	public
-	//	static func buildExpression(_ expression: T) -> [T] {
-	//		[expression]
-	//	}
 }
