@@ -39,14 +39,3 @@ public extension Website {
 		}
 	}
 }
-
-//		Script("""
-//			document.addEventListener("DOMContentLoaded", () => {
-//				const currentUrl = window.location.href
-//				if (!currentUrl.endsWith('.html')) return
-//
-//				const cleanURL = currentUrl.slice(0, -5)
-//				history.replaceState(null, '', cleanURL)
-//			})
-//		"""
-//		)
