@@ -3,7 +3,6 @@ import SwiftSyntaxMacros
 import SwiftCompilerPlugin
 
 public struct HTMLCoreTypeMacro: MemberMacro {
-	@frozen
 	private enum MacroError: String, Error {
 		case notAStruct = "@HTMLCoreType must not be applied to a non struct object"
 	}
@@ -38,4 +37,4 @@ private struct HTMLComponentPlugin: CompilerPlugin {
 	let providingMacros: [Macro.Type] = [HTMLCoreTypeMacro.self]
 }
 
-extension String: Error {}
+extension String: @retroactive Error {}
