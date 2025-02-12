@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension HTMLCoreRenderable {
+public extension Stylable {
 	func border(_ value: Int) -> Self {
 		self.style("border: \(value)")
 	}

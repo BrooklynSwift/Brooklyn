@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public extension Stylable {
 	func foregroundStyle(_ color: String) -> Self {
 		self.style("color: \(color)")

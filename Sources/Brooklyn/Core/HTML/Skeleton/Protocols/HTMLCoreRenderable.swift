@@ -1,6 +1,6 @@
 //
-//  HTMLCoreType.swift
-//  
+//  HTMLCoreRenderable.swift
+//
 //
 //  Created by Luki on 16/10/2024.
 //
