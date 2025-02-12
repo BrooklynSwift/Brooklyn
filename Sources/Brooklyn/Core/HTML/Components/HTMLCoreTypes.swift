@@ -1,5 +1,5 @@
 //
-//  HTMLComponents.swift
+//  HTMLCoreTypes.swift
 //
 //
 //  Created by Luki on 04/10/2024.

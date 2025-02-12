@@ -1,5 +1,5 @@
 //
-//  Site.swift
+//  Website.swift
 //
 //
 //  Created by Luki on 17/10/2024.
