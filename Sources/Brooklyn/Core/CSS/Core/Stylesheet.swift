@@ -10,7 +10,7 @@ import Foundation
 /// A protocol that describes a CSS stylesheet
 public protocol Stylesheet {
 	@CSSVariableBuilder
-	var variables: [CSSVariable]  { get }
+	var variables: [CSSVariable] { get }
 
 	@CSSFontFaceBuilder
 	var fontFaces: [CSSFontFace] { get }
@@ -39,16 +39,14 @@ internal extension Stylesheet {
 
 		var finalCSS = ""
 
-		finalCSS.append(variables, if: self.variables.contains(where: { !$0.name.isEmpty && !$0.value.isEmpty }))
-		finalCSS.append(fontFaces, if: fontFaces.count != 0)
-		finalCSS.append(keyframes, if: keyframes.count != 0)
-		finalCSS.append(mediaQueries, if: mediaQueries.count != 0)
-		finalCSS.append(classes)
+		[variables, fontFaces, keyframes, mediaQueries, classes].forEach { finalCSS.append($0) }
 		finalCSS.write(toFile: name())
 	}
 
 	private func renderVariables() -> String {
-		"""
+		guard variables.contains(where: { !$0.name.isEmpty && !$0.value.isEmpty }) else { return "" }
+
+		return """
 		:root {
 			\(variables.compactMap { "\($0.name): \($0.value);" }.joined(separator: .separator))
 		}\n\n
@@ -56,7 +54,9 @@ internal extension Stylesheet {
 	}
 
 	private func renderFontFaces() -> String {
-		fontFaces.reduce(into: "") { result, fontFace in
+		guard fontFaces.count != 0 else { return "" }
+
+		return fontFaces.reduce(into: "") { result, fontFace in
 			let css = """
 			@font-face {
 				font-family: '\(fontFace.family.name)';
@@ -79,7 +79,9 @@ internal extension Stylesheet {
 	}
 
 	private func renderKeyframes() -> String {
-		keyframes.reduce(into: "") { result, keyframe in
+		guard keyframes.count != 0 else { return "" }
+
+		return keyframes.reduce(into: "") { result, keyframe in
 			let points = keyframe.points.compactMap {
 				"\(String.fourSpaces)\($0.percentage) { \($0.value.property): \($0.value.rawValue); }\n"
 			}.joined()
@@ -89,7 +91,9 @@ internal extension Stylesheet {
 	}
 
 	private func renderMediaQueries() -> String {
-		mediaQueries.reduce(into: "") { result, mediaQuery in
+		guard mediaQueries.count != 0 else { return "" }
+
+		return mediaQueries.reduce(into: "") { result, mediaQuery in
 			let cssClasses = mediaQuery.classes.reduce(into: "") { classes, cssClass in
 				let rules = cssClass.rules.reduce(into: "") { rulesResult, rule in
 					let properties = rule.properties.compactMap { "    \($0.name): \($0.value);"}.joined(separator: .separator)
@@ -107,7 +111,12 @@ internal extension Stylesheet {
 				variables += "\n" + css + "\n"
 			}
 
-			result += "@media \(mediaQuery.condition.value) {\n\(cssClasses)\(variables)}\n\n"
+			let conditions = mediaQuery.conditions.map { condition in
+				"(\(condition.type): \(condition.value))"
+			}
+			.joined(separator: " and ")
+
+			result += "@media \(conditions) {\n\(cssClasses)\(variables)}\n\n"
 		}
 	}
 }
@@ -131,15 +140,5 @@ public extension Stylesheet {
 
 	func name() -> String {
 		return "styles.css"
-	}
-}
-
-// MARK: - Private
-
-private extension String {
-	mutating func append(_ newString: String, if condition: Bool) {
-		if condition {
-			self.append(newString)
-		}
 	}
 }
