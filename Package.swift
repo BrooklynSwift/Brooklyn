@@ -11,7 +11,7 @@ let package = Package(
 		.executable(name: "BrooklynCLI", targets: ["BrooklynCLI"])
 	],
 	dependencies: [
-		.package(path: "HTMLCoreType"),
+		.package(url: "https://github.com/BrooklynSwift/HTMLCoreType", branch: "main"),
 		.package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0")
 	],
 	targets: [

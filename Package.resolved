@@ -1,6 +1,15 @@
 {
-  "originHash" : "d125dea5b69758420b8e2696281cd146d2562853ceb331455cdaacfe1ff00aae",
+  "originHash" : "f546d9d79c79b4db08e246832aeded39f0fd109fa03e0daa8a7018f0e1bc49cf",
   "pins" : [
+    {
+      "identity" : "htmlcoretype",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BrooklynSwift/HTMLCoreType",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a7dea32a7082989cf60138408424afad66f9d81b"
+      }
+    },
     {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
