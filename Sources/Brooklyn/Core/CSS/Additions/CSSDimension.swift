@@ -67,6 +67,12 @@ public extension CSSDimension {
 	static func rem(_ value: Float) -> Self {
 		"\(value)rem"
 	}
+
+	/// Variable that represents the CSS `-webkit-fill-available` value
+	/// - Returns: `CSSDimension`
+	static var webkitFillAvailable: Self {
+		return "-webkit-fill-available"
+	}
 }
 
 // MARK: - ExpressibleByStringInterpolation
