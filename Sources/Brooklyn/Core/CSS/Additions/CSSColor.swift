@@ -9,19 +9,20 @@ import Foundation
 
 /// A struct that represents a CSS color
 public struct CSSColor: RawRepresentable {
-	// MARK: - RawRepresentable
-
 	public let rawValue: String
 
 	public init?(rawValue: String) {
 		self.rawValue = rawValue
 	}
+}
 
+// MARK: - Public
+
+public extension CSSColor {
 	/// Function that converts a hex integer to a CSS color
 	/// - Parameter value: An integer that represents the hex color
 	/// - Returns: `CSSColor`
-	static
-	public func hex(_ value: Int) -> Self {
+	static func hex(_ value: Int) -> Self {
 		let valueCount = String(describing: value).dropFirst().dropFirst().count
 		let hexString: String
 
@@ -46,6 +47,49 @@ extension CSSColor: ExpressibleByStringLiteral {
 		self.rawValue = value
 	}
 }
+
+// MARK: - Dynamic Colors
+
+public extension CSSColor {
+	// TODO: Add secondary, tertiary & quaternary colors
+
+	/// A variable that represents a dynamic CSS color based on the user's theme, defaulting to `white` for light mode / `black` for dark mode.
+	///
+	/// This static variable creates a CSS color using the CSS `light-dark()` function, which allows
+	/// for different color values depending on the user's system color scheme preference.
+	///
+	/// - Note: In order for this property to take effect, you **must** set the `color-scheme` CSS property.
+	static var background: CSSColor {
+		return "light-dark(white, black)"
+	}
+
+	/// A variable that represents a dynamic CSS color based on the user's theme, defaulting to `black` for light mode / `white` for dark mode. Useful for setting dynamic colors on elements that should be visible over the current background color, e.g. texts.
+	///
+	/// This static variable creates a CSS color using the CSS `light-dark()` function, which allows
+	/// for different color values depending on the user's system color scheme preference.
+	///
+	/// - Note: In order for this property to take effect, you **must** set the `color-scheme` CSS property.
+	static var primary: CSSColor {
+		return "light-dark(black, white)"
+	}
+
+	/// Function that creates a dynamic CSS color that automatically switches between light & dark mode.
+	///
+	/// This static function creates a CSS color using the CSS `light-dark()` function, which allows
+	/// for different color values depending on the user's system color scheme preference.
+	///
+	/// - Parameters:
+	///		- light: The color to use when the system is in light mode.
+	///		- dark: The color to use when the system is in dark mode.
+	/// - Returns: A new `CSSColor` instance that will adapt based on the system color scheme.
+	///
+	/// - Note: In order for this property to take effect, you **must** set the `color-scheme` CSS property.
+	static func system(light: CSSColor, dark: CSSColor) -> Self {
+		return .init(stringLiteral: "light-dark(\(light.rawValue), \(dark.rawValue))")
+	}
+}
+
+// MARK: - CSS Colors
 
 public extension CSSColor {
 	static let aliceBlue: CSSColor = "aliceblue",
