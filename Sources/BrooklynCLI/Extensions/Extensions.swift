@@ -5,8 +5,7 @@
 //  Created by Luki on 04/11/2024.
 //
 
-import class Foundation.Pipe
-import class Foundation.Process
+import Foundation
 
 extension Process {
 	@discardableResult
@@ -15,8 +14,9 @@ extension Process {
 		process.arguments = ["-c", command]
 		process.executableURL = .init(filePath: "/bin/zsh")
 
-		let pipe = Pipe()
-		process.standardOutput = pipe
+		// TODO: process both stdout & stderr at the same time without blocking
+		let output = Pipe()
+		process.standardOutput = output
 
 		Task {
 			try process.run()
@@ -27,14 +27,10 @@ extension Process {
 				try await Task.sleep(for: .seconds(1))
 				return Process.execute(command: nextCommand)
 			}
-
 			_ = readLine()
 			process.terminate()
 		}
 
-		do {
-			let data = pipe.fileHandleForReading.readDataToEndOfFile()
-			return String(decoding: data, as: UTF8.self)
-		}
+		return String(decoding: output.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
 	}
 }
