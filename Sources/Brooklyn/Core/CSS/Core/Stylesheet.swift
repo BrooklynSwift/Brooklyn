@@ -111,11 +111,17 @@ internal extension Stylesheet {
 				variables += "\n" + css + "\n"
 			}
 
-			let conditions = mediaQuery.conditions.map { condition in
-				"(\(condition.type): \(condition.value))"
-			}
-			.joined(separator: " and ")
+			let conditions = mediaQuery.conditions.reduce("") { result, condition in
+				let conditionString: String
 
+				if condition.type == "screen" || condition.type == "print" {
+					conditionString = String(describing: condition.type)
+				}
+				else {
+					conditionString = condition.value.isEmpty ? "(\(condition.type))" : "(\(condition.type): \(condition.value))"
+				}
+				return result.isEmpty ? conditionString : result + " and " + conditionString
+			}
 			result += "@media \(conditions) {\n\(cssClasses)\(variables)}\n\n"
 		}
 	}
