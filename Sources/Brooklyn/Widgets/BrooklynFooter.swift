@@ -14,7 +14,7 @@ public struct BrooklynFooter: CustomRenderable {
 	internal var body: [HTMLRenderable] {
 		var span = Span {
 			Text("Made with")
-			Link("Brooklyn", target: "https://github.com/Luki120/Brooklyn/")
+			Link("Brooklyn", target: "https://github.com/BrooklynSwift/Brooklyn")
 				.class("brooklyn-text")
 		}
 
