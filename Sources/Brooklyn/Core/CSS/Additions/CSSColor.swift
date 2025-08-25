@@ -90,7 +90,7 @@ public extension CSSColor {
 }
 
 // MARK: - CSS Colors
-
+@MainActor
 public extension CSSColor {
 	static let aliceBlue: CSSColor = "aliceblue",
 			   antiqueWhite = "antiquewhite",

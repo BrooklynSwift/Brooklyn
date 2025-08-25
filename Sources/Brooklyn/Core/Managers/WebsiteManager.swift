@@ -9,10 +9,10 @@ import Foundation
 
 internal
 final class WebsiteManager {
+	@MainActor
 	static let shared = WebsiteManager()
 
-	private var assetsDirectory: URL!
-	private var buildDirectory: URL!
+	private var assetsDirectory, buildDirectory: URL!
 	private var rootDirectory: URL = .init(fileURLWithPath: FileManager.default.currentDirectoryPath).deletingLastPathComponent()
 
 	//  MARK: - Private

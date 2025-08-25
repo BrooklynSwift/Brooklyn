@@ -8,6 +8,7 @@
 import Foundation
 
 /// A protocol that describes a Brooklyn website
+@MainActor
 public protocol Website {
 	@PageBuilder
 	var pages: [PageContent] { get }
@@ -16,6 +17,7 @@ public protocol Website {
 }
 
 public extension Website {
+	@MainActor
 	func render() {
 		WebsiteManager.shared.cleanBuildDirectory()
 		WebsiteManager.shared.copyAssets()
