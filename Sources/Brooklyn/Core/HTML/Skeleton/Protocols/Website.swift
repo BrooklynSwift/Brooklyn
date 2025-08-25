@@ -13,17 +13,17 @@ public protocol Website {
 	@PageBuilder
 	var pages: [PageContent] { get }
 
-	func render()
+	func render(includesBaseStyles: Bool)
 }
 
 public extension Website {
 	@MainActor
-	func render() {
+	func render(includesBaseStyles: Bool = true) {
 		WebsiteManager.shared.cleanBuildDirectory()
 		WebsiteManager.shared.copyAssets()
 
 		guard let homePage = pages.first else { return }
-		homePage.render(withConfiguration: homePage.configuration)
+		homePage.render(configuration: homePage.configuration, includesBaseStyles: includesBaseStyles)
 
 		pages.dropFirst().forEach {
 			let pageName = String(describing: type(of: $0))
@@ -37,7 +37,7 @@ public extension Website {
 				.joined()
 				.lowercased()
 
-			$0.render(withConfiguration: $0.configuration, filePath: "\(pageName).html")
+			$0.render(configuration: $0.configuration, filePath: "\(pageName).html", includesBaseStyles: includesBaseStyles)
 		}
 	}
 }

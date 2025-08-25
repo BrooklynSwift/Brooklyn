@@ -15,17 +15,13 @@ public protocol PageContent {
 
 	var configuration: PageConfiguration { get }
 
-	func render(withConfiguration config: PageConfiguration, filePath: String, includesBaseStyles: Bool)
+	func render(configuration: PageConfiguration, filePath: String, includesBaseStyles: Bool)
 }
 
 public extension PageContent {
-	func render(
-		withConfiguration config: PageConfiguration = .init(),
-		filePath: String = "index.html",
-		includesBaseStyles: Bool = true
-	) {
-		let newLine = config.stylesheet != nil ? "\(String.separator)" : ""
-		let stylesheet = "<link rel=\"stylesheet\" type=\"text/css\" href=\"\(config.stylesheet?.name() ?? "")\">\(String.separator)"
+	func render(configuration: PageConfiguration = .init(), filePath: String = "index.html", includesBaseStyles: Bool) {
+		let newLine = configuration.stylesheet != nil ? "\(String.separator)" : ""
+		let stylesheet = "<link rel=\"stylesheet\" type=\"text/css\" href=\"\(configuration.stylesheet?.name() ?? "")\">\(String.separator)"
 		let baseStylesheet = "<link rel=\"stylesheet\" type=\"text/css\" href=\"resets.css\">\(String.separator)"
 
 		var html = """
@@ -36,7 +32,7 @@ public extension PageContent {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">\(newLine)
 		"""
 
-		if config.stylesheet != nil {
+		if configuration.stylesheet != nil {
 			html.append(stylesheet)
 		}
 
@@ -45,7 +41,7 @@ public extension PageContent {
 		}
 
 		html.append("""
-		<title>\(config.title)</title>
+		<title>\(configuration.title)</title>
 		</head>
 		<body>
 		\(body.map { $0.render(indent: .fourSpaces) }.joined())
@@ -55,7 +51,7 @@ public extension PageContent {
 
 		html.write(toFile: filePath)
 
-		guard let stylesheet = config.stylesheet else { return }
+		guard let stylesheet = configuration.stylesheet else { return }
 		stylesheet.render()
 
 		guard includesBaseStyles else { return }
