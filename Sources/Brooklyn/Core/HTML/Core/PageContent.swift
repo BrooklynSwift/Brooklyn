@@ -15,14 +15,19 @@ public protocol PageContent {
 
 	var configuration: PageConfiguration { get }
 
-	func render(configuration: PageConfiguration, filePath: String, includesBaseStyles: Bool)
+	func render(from: StaticString, writeTo: String, configuration: PageConfiguration, includesBaseStyles: Bool)
 }
 
 public extension PageContent {
-	func render(configuration: PageConfiguration = .init(), filePath: String = "index.html", includesBaseStyles: Bool) {
+	func render(
+		from file: StaticString,
+		writeTo filePath: String = "index.html",
+		configuration: PageConfiguration = .init(),
+		includesBaseStyles: Bool
+	) {
 		let newLine = configuration.stylesheet != nil ? "\(String.separator)" : ""
-		let stylesheet = "<link rel=\"stylesheet\" type=\"text/css\" href=\"\(configuration.stylesheet?.name() ?? "")\">\(String.separator)"
-		let baseStylesheet = "<link rel=\"stylesheet\" type=\"text/css\" href=\"resets.css\">\(String.separator)"
+		let stylesheet = "<link rel=\"stylesheet\" type=\"text/css\" href=\"\(configuration.stylesheet?.name ?? "")\">\(String.separator)"
+		let baseStylesheet = "<link rel=\"stylesheet\" type=\"text/css\" href=\"base.css\">\(String.separator)"
 
 		var html = """
 		<!DOCTYPE html>
@@ -49,15 +54,15 @@ public extension PageContent {
 		</html>
 		""")
 
-		html.write(toFile: filePath)
+		html.write(toFile: filePath, from: file)
 
 		guard let stylesheet = configuration.stylesheet else { return }
-		stylesheet.render()
+		stylesheet.render(from: file)
 
 		guard includesBaseStyles else { return }
 
 		let baseStyles = BaseStyles()
-		baseStyles.render()
+		baseStyles.render(from: file)
 	}
 }
 
@@ -80,6 +85,8 @@ public struct PageConfiguration {
 }
 
 private struct BaseStyles: Stylesheet {
+	let name = "base.css"
+
 	private struct Base: CSSClass {
 		let name = "body"
 
@@ -109,9 +116,5 @@ private struct BaseStyles: Stylesheet {
 
 	var variables: [CSSVariable] {
 		CSSVariable(name: "color-scheme", value: "light dark")
-	}
-
-	func name() -> String {
-		return "resets.css"
 	}
 }

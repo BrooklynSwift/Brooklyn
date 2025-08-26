@@ -12,19 +12,18 @@ import Foundation
 public protocol Website {
 	@PageBuilder
 	var pages: [PageContent] { get }
-
-	func render(includesBaseStyles: Bool)
+	
+	func render(from: StaticString, includesBaseStyles: Bool)
 }
 
 public extension Website {
 	@MainActor
-	func render(includesBaseStyles: Bool = true) {
-		WebsiteManager.shared.cleanBuildDirectory()
-		WebsiteManager.shared.copyAssets()
-
+	func render(from file: StaticString = #filePath, includesBaseStyles: Bool = true) {
+		WebsiteManager.configure(file: file)
+		
 		guard let homePage = pages.first else { return }
-		homePage.render(configuration: homePage.configuration, includesBaseStyles: includesBaseStyles)
-
+		homePage.render(from: file, configuration: homePage.configuration, includesBaseStyles: includesBaseStyles)
+		
 		pages.dropFirst().forEach {
 			let pageName = String(describing: type(of: $0))
 				.enumerated()
@@ -36,8 +35,13 @@ public extension Website {
 				}
 				.joined()
 				.lowercased()
-
-			$0.render(configuration: $0.configuration, filePath: "\(pageName).html", includesBaseStyles: includesBaseStyles)
+			
+			$0.render(
+				from: file,
+				writeTo: "\(pageName).html",
+				configuration: $0.configuration,
+				includesBaseStyles: includesBaseStyles
+			)
 		}
 	}
 }

@@ -24,13 +24,13 @@ public protocol Stylesheet {
 	@CSSMediaQueryBuilder
 	var mediaQueries: [CSSMediaQuery] { get }
 
-	func name() -> String
+	var name: String { get }
 }
 
 // - MARK: Rendering
 
 internal extension Stylesheet {
-	func render() {
+	func render(from file: StaticString) {
 		let variables = renderVariables()
 		let fontFaces =	renderFontFaces()
 		let classes = renderClasses()
@@ -40,7 +40,7 @@ internal extension Stylesheet {
 		var finalCSS = ""
 
 		[variables, fontFaces, keyframes, mediaQueries, classes].forEach { finalCSS.append($0) }
-		finalCSS.write(toFile: name())
+		finalCSS.write(toFile: name, from: file)
 	}
 
 	private func renderVariables() -> String {
@@ -128,23 +128,10 @@ internal extension Stylesheet {
 }
 
 public extension Stylesheet {
-	var fontFaces: [CSSFontFace] {
-		get { [] }
-	}
+	var fontFaces: [CSSFontFace] { [] }
+	var variables: [CSSVariable] { [] }
+	var keyframes: [CSSKeyframes] { [] }
+	var mediaQueries: [CSSMediaQuery] { [] }
 
-	var variables: [CSSVariable] {
-		get { [] }
-	}
-
-	var keyframes: [CSSKeyframes] {
-		get { [] }
-	}
-
-	var mediaQueries: [CSSMediaQuery] {
-		get { [] }
-	}
-
-	func name() -> String {
-		return "styles.css"
-	}
+	var name: String { "styles.css" }
 }

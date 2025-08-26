@@ -7,31 +7,35 @@
 
 import Foundation
 
+@MainActor
 internal
 final class WebsiteManager {
-	@MainActor
-	static let shared = WebsiteManager()
+	private
+	static var instance: WebsiteManager?
 
-	private var assetsDirectory, buildDirectory: URL!
-	private var rootDirectory: URL = .init(fileURLWithPath: FileManager.default.currentDirectoryPath).deletingLastPathComponent()
-
-	//  MARK: - Private
-
-	private init() {
-		assetsDirectory = createDirectory(withName: "Assets/")
-		buildDirectory = createDirectory(withName: "Build/")
+	static var shared: WebsiteManager {
+		guard let instance else { fatalError("WebsiteManager.shared accessed before calling configure(file:)") }
+		return instance
 	}
 
-	private func createDirectory(withName path: String) -> URL {
-		let rootDirectory = rootDirectory.findProjectRoot(startingAt: rootDirectory)
-		return rootDirectory.appending(path: path)
+	static func configure(file: StaticString) {
+		guard instance == nil else { return }
+		instance = WebsiteManager(file: file)
+		instance?.cleanBuildDirectory()
+		instance?.copyAssets()
 	}
-}
 
-// MARK: - Internal
+	// MARK: - Private
 
-internal extension WebsiteManager {
-	func cleanBuildDirectory() {
+	private let assetsDirectory, buildDirectory: URL
+
+	private init(file: StaticString) {
+		let rootDir: URL = .findProjectRoot(from: file)
+		assetsDirectory = rootDir.appending(path: "Assets/")
+		buildDirectory = rootDir.appending(path: "Build/")
+	}
+
+	private func cleanBuildDirectory() {
 		do {
 			try FileManager.default.removeItem(at: buildDirectory)
 			try FileManager.default.createDirectory(at: buildDirectory, withIntermediateDirectories: true)
@@ -41,7 +45,7 @@ internal extension WebsiteManager {
 		}
 	}
 
-	func copyAssets() {
+	private func copyAssets() {
 		do {
 			let assets = try FileManager.default.contentsOfDirectory(at: assetsDirectory, includingPropertiesForKeys: nil)
 			try assets.forEach {

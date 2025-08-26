@@ -17,7 +17,7 @@ public struct A: HTMLCoreRenderable, ButtonContent {}
 
 /// A struct that represents the HTML button tag
 public struct Button: HTMLCoreRenderable {
-	public var tag = "button"
+	public let tag = "button"
 	public var attributes: HTMLAttributes = .init()
 	public var children: [HTMLRenderable] { content }
 
@@ -48,26 +48,34 @@ public struct Section: HTMLCoreRenderable {}
 
 /// A struct that represents the HTML script tag
 public struct Script: HTMLCoreRenderable {
-	public var tag = "script"
+	public let tag = "script"
+	public let children = [HTMLRenderable]()
 	public var attributes: HTMLAttributes = .init()
-	public var children = [HTMLRenderable]()
 
-	private var code: String?
-	private var file: String?
+	private let filePath: StaticString
+	private var code, file: String?
 
 	/// Designated initializer
-	/// - Parameter code: A string that represents a piece of JS code
+	/// - Parameter code: A `String` that represents a piece of JS code
 	public init(_ code: String) {
 		self.code = code
+		self.filePath = #filePath
 	}
 
 	/// Designated initializer
-	/// - Parameter code: A string that represents the source file for a JS file
-	public init(file: String) {
+	/// - Parameters:
+	///		- file: A `String` that represents the JS file
+	///		- filePath: A `StaticString` that represents the file path, defaults to `#filePath`
+	public init(file: String, filePath: StaticString = #filePath) {
 		self.file = file
+		self.filePath = filePath
 	}
 
 	public func render(indent: String) -> String {
+		render(indent: indent, from: filePath)
+	}
+
+	private func render(indent: String, from filePath: StaticString) -> String {
 		if let code {
 			let indentedCode = code
 				.split(separator: "\n")
@@ -77,10 +85,7 @@ public struct Script: HTMLCoreRenderable {
 			return "\(indent)<script>\n\(indentedCode)\n\(indent)</script>\n"
 		}
 		else if let file {
-			let currentDir = URL(filePath: FileManager.default.currentDirectoryPath)
-			let rootDir = currentDir.findProjectRoot(startingAt: currentDir)
-
-			if !FileManager.default.fileExists(atPath: rootDir.path() + "Assets/\(file)") {
+			if !FileManager.default.fileExists(atPath: URL.findProjectRoot(from: filePath).path() + "Assets/\(file)") {
 				fatalError("Attempting to link to a non existent script file")
 			}
 			return "\(indent)<script src=\"\(file)\"></script>\n"
@@ -97,14 +102,14 @@ public struct Span: HTMLCoreRenderable {}
 
 /// A struct that represents a plain string that can be rendered inside any HTML tag
 public struct Text: ButtonContent {
-	public var tag = ""
+	public let tag = ""
+	public let children = [HTMLRenderable]()
 	public var attributes: HTMLAttributes = .init()
-	public var children = [HTMLRenderable]()
 
 	private let content: String
 
 	/// Designated initializer
-	/// - Parameter content: A string that represents the text
+	/// - Parameter content: A `String` that represents the text
 	public init(_ content: String) {
 		self.content = content
 	}
