@@ -7,30 +7,27 @@
 
 import Foundation
 
-internal class FileWatcher {
+internal
+final class FileMonitor: @unchecked Sendable {
+	static let shared = FileMonitor()
+	private init() {}
+
 	private let eventCallback: FSEventStreamCallback = { _, contextInfo, numEvents, eventPaths, _, _ in
 		guard let contextInfo else { return }
 
-		let watcher = Unmanaged<FileWatcher>.fromOpaque(contextInfo).takeUnretainedValue()
+		let fileMonitor = Unmanaged<FileMonitor>.fromOpaque(contextInfo).takeUnretainedValue()
 		let paths = Unmanaged<CFArray>.fromOpaque(eventPaths).takeUnretainedValue() as? [String] ?? []
 
-		watcher.callback?()
+		fileMonitor.onFileMonitor()
 	}
 
+	private var paths = [FileManager.default.currentDirectoryPath + "/Sources/"]
 	private var streamRef: FSEventStreamRef?
 
-	var callback: (() -> Void)?
+	var onFileMonitor: () -> Void = {}
 
-	private let paths: [String]
-
-	/// Designated initializer
-	/// - Parameter paths: An array of strings that represent the paths to watch
-	init(paths: [String]) {
-		self.paths = paths
-	}
-
-	/// Function to start watching for event changes
-	func start() {
+	/// Function to start monitoring for event changes
+	func startMonitoring() {
 		guard streamRef == nil else { return }
 
 		var context = FSEventStreamContext(

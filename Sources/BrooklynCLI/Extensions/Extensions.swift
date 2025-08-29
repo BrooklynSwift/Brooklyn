@@ -5,36 +5,26 @@
 //  Created by Luki on 04/11/2024.
 //
 
-import class Foundation.Pipe
-import class Foundation.Process
+import Foundation
 
 extension Process {
 	@discardableResult
-	static func execute(command: String, then nextCommand: String = "") -> String {
+	static func execute(command: String) throws -> String {
 		let process = Process()
 		process.arguments = ["-c", command]
 		process.executableURL = .init(filePath: "/bin/zsh")
 
-		let pipe = Pipe()
-		process.standardOutput = pipe
-
-		Task {
-			try process.run()
-		}
-
-		if !nextCommand.isEmpty {
-			Task {
-				try await Task.sleep(for: .seconds(1))
-				return Process.execute(command: nextCommand)
-			}
-
-			_ = readLine()
-			process.terminate()
-		}
+		let output = Pipe()
+		process.standardOutput = output
 
 		do {
-			let data = pipe.fileHandleForReading.readDataToEndOfFile()
-			return String(decoding: data, as: UTF8.self)
+			try process.run()
 		}
+		catch {
+			print("❌ Error running process: \(error.localizedDescription)")
+		}
+
+		let data = try output.fileHandleForReading.readToEnd() ?? Data()
+		return String(decoding: data, as: UTF8.self)
 	}
 }
