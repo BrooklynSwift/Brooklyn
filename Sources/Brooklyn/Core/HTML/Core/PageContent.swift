@@ -94,7 +94,7 @@ private struct BaseStyles: @MainActor Stylesheet {
 
 		var rules: [CSSRule] {
 			CSSRule(selector: name) {
-				CSSProperty(name: .backgroundColor, value: "light-dark(white, black)")
+				CSSProperty(name: .backgroundColor, value: .system(light: .white, dark: .black))
 				CSSProperty(name: .fontFamily, value: "arial")
 			}
 		}

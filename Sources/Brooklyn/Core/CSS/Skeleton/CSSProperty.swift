@@ -29,14 +29,37 @@ public struct CSSProperty {
 		self.value = value
 	}
 
-	/// A custom initializer that takes a `CSSAnimation` object
-	/// - Parameters:
-	///   - animation: A `CSSAnimation` object that represents a CSS animation
+	/// Custom initializer that takes a `CSSAnimation` object
+	/// - Parameter animation: A `CSSAnimation` object that represents a CSS animation
 	public init(animation: CSSAnimation) {
 		self.name = "animation"
 		self.value = animation.description
 	}
 }
+
+// MARK: - Overloads
+
+public extension CSSProperty {
+	/// Custom initializer to create a CSS property that takes a `CSSColor` object
+	/// - Parameters:
+	///		- name: A `Key` object that represents the property's name
+	///		- value: A `CSSColor` object
+	init(name: Key, value: CSSColor) {
+		self.name = name.rawValue
+		self.value = value.rawValue
+	}
+
+	/// Custom initializer to create a CSS property that takes a `CSSDimension` object
+	/// - Parameters:
+	///		- name: A `Key` object that represents the property's name
+	///		- value: A `CSSDimension` object
+	init(name: Key, value: CSSDimension) {
+		self.name = name.rawValue
+		self.value = value.rawValue
+	}
+}
+
+// MARK: - Key
 
 public extension CSSProperty {
 	/// A struct that represents a CSS property's name
