@@ -84,10 +84,12 @@ public struct PageConfiguration {
 	}
 }
 
-private struct BaseStyles: Stylesheet {
+@MainActor
+private struct BaseStyles: @MainActor Stylesheet {
 	let name = "base.css"
 
-	private struct Base: CSSClass {
+	@MainActor
+	private struct Base: @MainActor CSSClass {
 		let name = "body"
 
 		var rules: [CSSRule] {
@@ -98,7 +100,8 @@ private struct BaseStyles: Stylesheet {
 		}
 	}
 
-	private struct Resets: CSSClass {
+	@MainActor
+	private struct Resets: @MainActor CSSClass {
 		let name = "html, body"
 
 		var rules: [CSSRule] {
